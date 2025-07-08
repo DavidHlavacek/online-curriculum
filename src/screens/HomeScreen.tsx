@@ -62,26 +62,19 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ user }) => {
 
   return (
     <div className="home-container">
-      {/* Admin Controls */}
-      {user?.role === 'admin' && (
-        <div className="card mb-3">
-          <div className="admin-controls flex gap-2">
-            <button className="btn btn-primary" onClick={handleNewCurriculum}>
-              + New Curriculum
-            </button>
-            <button className="btn btn-primary" onClick={handleNewModule}>
-              + New Module
-            </button>
-          </div>
-        </div>
-      )}
-
       {/* Two Column Layout */}
       <div className="two-column-layout">
         {/* Left Column - Curricula */}
         <div className="column curricula-column">
-          <div className="column-header">
-            <h2>Curricula</h2>
+          <div className="column-header-with-button">
+            <div className="column-header-content">
+              <h2>Curricula</h2>
+              {user?.role === 'admin' && (
+                <button className="btn btn-admin-add" onClick={handleNewCurriculum}>
+                  + New Curriculum
+                </button>
+              )}
+            </div>
             <input
               type="text"
               placeholder="Search curricula..."
@@ -116,8 +109,15 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ user }) => {
 
         {/* Right Column - Modules */}
         <div className="column modules-column">
-          <div className="column-header">
-            <h2>Modules</h2>
+          <div className="column-header-with-button">
+            <div className="column-header-content">
+              <h2>Modules</h2>
+              {user?.role === 'admin' && (
+                <button className="btn btn-admin-add" onClick={handleNewModule}>
+                  + New Module
+                </button>
+              )}
+            </div>
             <input
               type="text"
               placeholder="Search modules..."
