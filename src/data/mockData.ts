@@ -1,18 +1,40 @@
 import { Module, Curriculum } from '../types';
 
-// Shared mock modules data - just 2 modules
+// shared mock modules data
 export let mockModules = [
   { id: '1', name: 'Software Engineering', credits: 7, curriculumId: '1' },
   { id: '2', name: 'Business Strategy', credits: 5, curriculumId: '2' },
+  { id: '3', name: 'Database Systems', credits: 5, curriculumId: '1' },
+  { id: '4', name: 'Machine Learning', credits: 8, curriculumId: '1' },
+  { id: '5', name: 'Human Anatomy', credits: 6, curriculumId: '' },
+  { id: '6', name: 'Art History', credits: 4, curriculumId: '' },
+  { id: '7', name: 'Financial Accounting', credits: 5, curriculumId: '' },
+  { id: '8', name: 'Introduction to Psychology', credits: 6, curriculumId: '' },
 ];
 
-// Mock curricula data - just 2 curriculums
-export const mockCurricula: Curriculum[] = [
-  { id: '1', name: 'Bachelor of Computer Science', year: 2024, modules: [] },
-  { id: '2', name: 'Master of Business Administration', year: 2024, modules: [] },
+// mock curricula data
+export let mockCurricula: Curriculum[] = [
+  { 
+    id: '1', 
+    name: 'Bachelor of Computer Science', 
+    year: 2024, 
+    description: 'A comprehensive program covering fundamental and advanced topics in computer science.',
+    duration: 4,
+    totalCredits: 240,
+    modules: [] 
+  },
+  { 
+    id: '2', 
+    name: 'Master of Business Administration', 
+    year: 2024,
+    description: 'An advanced program focusing on business strategy, leadership, and management.',
+    duration: 2,
+    totalCredits: 120,
+    modules: [] 
+  },
 ];
 
-// Enhanced mock data with chapters, competencies, and appendices
+// enhanced mock module data
 export const mockModuleDetails: Record<string, Module> = {
   '1': {
     id: '1',
@@ -167,6 +189,90 @@ export const mockModuleDetails: Record<string, Module> = {
       { name: 'Final Presentation', percentage: 40 }
     ],
     prerequisites: ['Introduction to Business']
+  },
+  '3': {
+    id: '3',
+    name: 'Database Systems',
+    code: 'DB-301',
+    credits: 5,
+    creditType: 'EC',
+    period: 3,
+    year: 1,
+    curriculumId: '1',
+    description: 'This module covers database design, SQL, and database management systems.',
+    chapters: [],
+    competencies: [],
+    appendices: []
+  },
+  '4': {
+    id: '4',
+    name: 'Machine Learning',
+    code: 'ML-401',
+    credits: 8,
+    creditType: 'EC',
+    period: 4,
+    year: 4,
+    curriculumId: '1',
+    description: 'Introduction to machine learning algorithms and their applications.',
+    chapters: [],
+    competencies: [],
+    appendices: []
+  },
+  '5': {
+    id: '5',
+    name: 'Human Anatomy',
+    code: 'HA-101',
+    credits: 6,
+    creditType: 'EC',
+    period: 1,
+    year: 1,
+    curriculumId: '',
+    description: 'Study of human body structure and systems.',
+    chapters: [],
+    competencies: [],
+    appendices: []
+  },
+  '6': {
+    id: '6',
+    name: 'Art History',
+    code: 'AH-201',
+    credits: 4,
+    creditType: 'EC',
+    period: 1,
+    year: 1,
+    curriculumId: '',
+    description: 'Survey of art history from ancient to modern times.',
+    chapters: [],
+    competencies: [],
+    appendices: []
+  },
+  '7': {
+    id: '7',
+    name: 'Financial Accounting',
+    code: 'FA-301',
+    credits: 5,
+    creditType: 'EC',
+    period: 1,
+    year: 1,
+    curriculumId: '',
+    description: 'Principles of financial accounting and reporting.',
+    chapters: [],
+    competencies: [],
+    appendices: []
+  },
+  '8': {
+    id: '8',
+    name: 'Introduction to Psychology',
+    code: 'PSY-101',
+    credits: 6,
+    creditType: 'EC',
+    period: 1,
+    year: 1,
+    curriculumId: '',
+    description: 'Overview of psychological theories and concepts.',
+    chapters: [],
+    competencies: [],
+    appendices: []
   }
 };
 
@@ -216,4 +322,48 @@ export function deleteModule(id: string) {
   
   // remove from mockModuleDetails
   delete mockModuleDetails[id];
+}
+
+// curriculum CRUD operations
+export function getCurriculumById(id: string): Curriculum | undefined {
+  const curriculum = mockCurricula.find(c => c.id === id);
+  if (curriculum) {
+    // populate modules array with actual modules
+    const curriculumModules = mockModules
+      .filter(m => m.curriculumId === id)
+      .map(m => mockModuleDetails[m.id])
+      .filter(Boolean) as Module[];
+    return { ...curriculum, modules: curriculumModules };
+  }
+  return undefined;
+}
+
+export function addCurriculum(curriculum: Omit<Curriculum, 'id'>) {
+  const newId = (Math.max(...mockCurricula.map(c => parseInt(c.id))) + 1).toString();
+  const newCurriculum = { ...curriculum, id: newId };
+  mockCurricula.push(newCurriculum);
+  return newCurriculum;
+}
+
+export function updateCurriculum(id: string, updates: Partial<Curriculum>) {
+  const index = mockCurricula.findIndex(c => c.id === id);
+  if (index !== -1) {
+    mockCurricula[index] = {
+      ...mockCurricula[index],
+      ...updates
+    };
+    return mockCurricula[index];
+  }
+  return null;
+}
+
+export function deleteCurriculum(id: string) {
+  mockCurricula = mockCurricula.filter(c => c.id !== id);
+  // also remove all modules associated with this curriculum
+  mockModules = mockModules.filter(m => m.curriculumId !== id);
+}
+
+// get all modules available for scheduling (not yet assigned to a period)
+export function getAvailableModules(): Module[] {
+  return Object.values(mockModuleDetails);
 }

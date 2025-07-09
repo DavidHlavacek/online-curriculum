@@ -74,5 +74,8 @@ export interface Curriculum {
   id: string;
   name: string;
   year: number;
+  description?: string;
+  duration: number; // in years
+  totalCredits?: number;
   modules: Module[];
 } 
