@@ -117,10 +117,18 @@ body {
 
 /* Main Content */
 .main-content {
-  max-width: 1200px;
-  margin: 0 auto;
+  width: 100%;
+  margin: 0;
   padding: 30px 20px;
   min-height: calc(100vh - 70px);
+}
+
+/* For screens that need centered content */
+.home-container,
+.detail-container,
+.list-screen {
+  max-width: 75%;
+  margin: 0 auto;
 }
 
 /* Home Screen Two-Column Layout */
@@ -1052,8 +1060,10 @@ textarea.form-control {
 
 /* Module Wizard Styles */
 .wizard-container {
-  min-height: 100vh;
+  min-height: calc(100vh - 70px);
   background: #f5f5f5;
+  margin: -30px -20px;
+  padding: 0;
 }
 
 .wizard-header {
@@ -1061,6 +1071,8 @@ textarea.form-control {
   color: white;
   padding: 15px 30px;
   text-align: center;
+  width: 100%;
+  margin: 0;
 }
 
 .wizard-header h2 {
@@ -1070,7 +1082,7 @@ textarea.form-control {
 }
 
 .wizard-body {
-  max-width: 900px;
+  max-width: 75%;
   margin: 0 auto;
   padding: 40px 20px;
 }
@@ -1653,7 +1665,7 @@ textarea.form-control {
 .empty-message {
   text-align: center;
   color: #6c757d;
-  padding: 40px;
+  padding: 20px;
   font-style: italic;
 }
 
@@ -1949,9 +1961,15 @@ textarea.form-control {
 
 /* curriculum wizard scheduling styles */
 .scheduling-step {
-  height: 600px;
+  height: calc(100vh - 400px);
+  min-height: 500px;
   display: flex;
   flex-direction: column;
+}
+
+.scheduling-step h2 {
+  margin-bottom: 20px;
+  flex-shrink: 0;
 }
 
 .scheduling-container {
@@ -1959,21 +1977,24 @@ textarea.form-control {
   gap: 20px;
   height: 100%;
   flex: 1;
+  overflow: hidden;
 }
 
 .modules-sidebar {
-  width: 300px;
+  width: 280px;
   display: flex;
   flex-direction: column;
   background-color: #f8f9fa;
   padding: 16px;
   border-radius: 8px;
+  overflow: hidden;
 }
 
 .available-modules {
   flex: 1;
   overflow-y: auto;
   margin-top: 16px;
+  padding-right: 8px;
 }
 
 .module-card {
@@ -2109,4 +2130,32 @@ textarea.form-control {
   color: #17a2b8;
   font-size: 14px;
   margin-top: 12px;
-} 
+}
+
+/* user info in header */
+.user-info {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  margin-right: 12px;
+}
+
+.user-name {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  font-size: 15px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* loading screen */
+.loading-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-size: 18px;
+  color: #666;
+}

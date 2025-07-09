@@ -8,3 +8,8 @@ npm i
 ```
 npm start
 ```
+
+# Admin credentials
+
+## username: admin
+## password: admin
