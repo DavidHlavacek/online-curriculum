@@ -2109,4 +2109,27 @@ textarea.form-control {
   color: #17a2b8;
   font-size: 14px;
   margin-top: 12px;
-} 
+}
+
+/* user info in header */
+.user-info {
+  display: flex;
+  align-items: center;
+  margin-right: 16px;
+}
+
+.user-name {
+  color: #333;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* loading screen */
+.loading-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-size: 18px;
+  color: #666;
+}
