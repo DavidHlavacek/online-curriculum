@@ -1,7 +1,7 @@
 export class AuthService {
   private static readonly ADMIN_USERNAME = 'admin';
   // hashed password for 'admin' using SHA-256
-  private static readonly ADMIN_PASSWORD_HASH = 'd82494f05d6917ba02f7aaa29689ccb444bb73f20380876cb05d1f37537b7892';
+  private static readonly ADMIN_PASSWORD_HASH = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
   private static readonly SESSION_KEY = 'curriculum_session_token';
   
   // generate a random session token

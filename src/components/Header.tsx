@@ -33,11 +33,6 @@ const Header: React.FC<HeaderProps> = ({ isAuthenticated, userRole, userName, on
                         Home
                       </Link>
                     </li>
-                    {userRole === 'admin' && (
-                        <li className="user-info">
-                          <span className="user-name">Welcome, {userName || 'Admin'}</span>
-                        </li>
-                    )}
                     {userRole === 'admin' && onLogout && (
                         <li>
                           <button className="nav-btn btn-logout" onClick={onLogout}>
@@ -45,16 +40,21 @@ const Header: React.FC<HeaderProps> = ({ isAuthenticated, userRole, userName, on
                           </button>
                         </li>
                     )}
-                    {userRole === 'guest' && (
-                        <li className="user-info">
-                          <span className="user-name">Guest User</span>
-                        </li>
-                    )}
                     {userRole === 'guest' && onAdminLogin && (
                         <li>
                           <button className="nav-btn btn-admin-login" onClick={onAdminLogin}>
                             Admin Login
                           </button>
+                        </li>
+                    )}
+                    {userRole === 'admin' && (
+                        <li className="user-info">
+                          <span className="user-name">Welcome, {userName || 'Admin'}</span>
+                        </li>
+                    )}
+                    {userRole === 'guest' && (
+                        <li className="user-info">
+                          <span className="user-name">Guest User</span>
                         </li>
                     )}
                   </>
