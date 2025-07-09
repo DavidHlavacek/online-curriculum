@@ -1,139 +1,208 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { User } from '../types';
+import { mockModuleDetails, deleteModule } from '../data/mockData';
 
 interface ModuleDetailScreenProps {
   user: User | null;
 }
 
-// Mock module data
-const mockModuleDetails = {
-  '1': {
-    id: '1',
-    name: 'Human Anatomy',
-    code: 'ANAT101',
-    credits: 6,
-    period: 1,
-    year: 1,
-    description: 'Introduction to human anatomy covering all major body systems.',
-    learningObjectives: [
-      'Understand basic anatomical terminology',
-      'Identify major organ systems',
-      'Analyze anatomical relationships'
-    ],
-    assessmentMethods: ['Written Exam (60%)', 'Practical Exam (40%)'],
-    prerequisites: ['None'],
-    competencies: ['Scientific Knowledge', 'Critical Analysis']
-  },
-  '2': {
-    id: '2',
-    name: 'Software Engineering',
-    code: 'SE201',
-    credits: 7,
-    period: 2,
-    year: 2,
-    description: 'Comprehensive course on software development methodologies and practices.',
-    learningObjectives: [
-      'Master software development lifecycle',
-      'Apply design patterns',
-      'Implement testing strategies'
-    ],
-    assessmentMethods: ['Project (70%)', 'Written Exam (30%)'],
-    prerequisites: ['Programming Fundamentals'],
-    competencies: ['Technical Skills', 'Problem Solving', 'Project Management']
-  }
-};
+type TabType = 'overview' | 'competencies' | 'appendices';
 
 const ModuleDetailScreen: React.FC<ModuleDetailScreenProps> = ({ user }) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<TabType>('overview');
   
-  const module = id ? mockModuleDetails[id as keyof typeof mockModuleDetails] : null;
-
-  const handleEdit = () => {
-    navigate(`/module/edit/${id}`);
-  };
-
-  const handleBack = () => {
-    navigate('/home');
-  };
+  const module = id ? mockModuleDetails[id] : null;
 
   if (!module) {
     return (
-      <div className="card">
-        <h1>Module Not Found</h1>
-        <button className="btn btn-outline" onClick={handleBack}>
-          Back to Home
+      <div className="detail-container">
+        <button onClick={() => navigate(-1)} className="btn btn-secondary">
+          ← Back
         </button>
+        <div className="detail-card">
+          <p>Module not found</p>
+        </div>
       </div>
     );
   }
 
-  return (
-    <div className="detail-screen">
-      <div className="detail-header">
-        <button className="btn btn-outline" onClick={handleBack}>
-          ← Back to Home
-        </button>
-        {user?.role === 'admin' && (
-          <button className="btn btn-primary" onClick={handleEdit}>
-            Edit Module
-          </button>
-        )}
-      </div>
+  const handleDelete = () => {
+    if (window.confirm('Are you sure you want to delete this module?')) {
+      deleteModule(id!);
+      alert('Module deleted successfully!');
+      navigate('/');
+    }
+  };
 
-      <div className="card">
-        <div className="card-header">
-          <h1 className="card-title">{module.name}</h1>
-          <p>Code: {module.code} | {module.credits} EC | Year {module.year}, Period {module.period}</p>
+  const handleDownload = (appendix: { fileName: string; url: string }) => {
+    // create temporary anchor element and trigger download
+    const link = document.createElement('a');
+    link.href = appendix.url;
+    link.download = appendix.fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'overview':
+        return (
+          <div className="tab-content overview-tab">
+            <div className="module-header-info">
+              <h1>{module.name}</h1>
+              <span className="credits-badge">{module.credits} {module.creditType || 'EC'}</span>
+            </div>
+            
+            <div className="module-description">
+              <p>{module.description}</p>
+            </div>
+
+            {module.chapters && module.chapters.length > 0 && (
+              <>
+                <div className="contents-box">
+                  <h3>Contents</h3>
+                  <ol>
+                    {module.chapters.map((chapter) => (
+                      <li key={chapter.id}>
+                        {chapter.title}
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+
+                <div className="chapters-content">
+                  {module.chapters.map((chapter) => (
+                    <div key={chapter.id} className="chapter-section">
+                      <h3>{chapter.number}. {chapter.title}</h3>
+                      <p>{chapter.content}</p>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        );
+      
+      case 'competencies':
+        return (
+          <div className="tab-content competencies-tab">
+            <div className="competencies-matrix">
+              <table className="matrix-table">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Analysis</th>
+                    <th>Advise</th>
+                    <th>Design</th>
+                    <th>Realise</th>
+                    <th>Manage & Control</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {['User Interaction', 'Organisational processes', 'Infrastructure', 'Software', 'Hardware-interfacing'].map((domain) => (
+                    <tr key={domain}>
+                      <td className="domain-label">{domain}</td>
+                      {['Analysis', 'Advise', 'Design', 'Realise', 'Manage & Control'].map((category) => {
+                        const competencies = module.competencies?.filter(
+                          (c) => c.domain === domain && c.category === category
+                        ) || [];
+                        
+                        return (
+                          <td key={category} className="competency-cell">
+                            {competencies.map((comp) => (
+                              <div key={comp.id} className="competency-item">
+                                <span className="competency-text">{comp.text}</span>
+                                <span className="competency-level">(Level {comp.level})</span>
+                              </div>
+                            ))}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        );
+      
+      case 'appendices':
+        return (
+          <div className="tab-content appendices-tab">
+            <div className="appendices-list">
+              {module.appendices && module.appendices.length > 0 ? (
+                module.appendices.map((appendix) => (
+                  <div key={appendix.id} className="appendix-item" onClick={() => handleDownload(appendix)}>
+                    <div className="file-icon">📄</div>
+                    <span className="file-name">{appendix.fileName}</span>
+                  </div>
+                ))
+              ) : (
+                <p className="no-appendices">No appendices available for this module.</p>
+              )}
+            </div>
+          </div>
+        );
+    }
+  };
+
+  return (
+    <div className="detail-container">
+      <button onClick={() => navigate(-1)} className="btn btn-secondary">
+        ← Back
+      </button>
+      
+      <div className="detail-card">
+        <div className="detail-header">
+          <h2>Module Detail: {module.name}</h2>
+          <div className="header-actions">
+            {user?.role === 'admin' && (
+              <>
+                <button 
+                  onClick={() => navigate(`/module/edit/${module.id}`)}
+                  className="btn btn-primary"
+                >
+                  Edit Module
+                </button>
+                <button 
+                  onClick={handleDelete}
+                  className="btn btn-danger"
+                >
+                  Delete Module
+                </button>
+              </>
+            )}
+          </div>
         </div>
 
-        <div className="detail-content">
-          <div className="detail-section">
-            <h3>Description</h3>
-            <p>{module.description}</p>
+        <div className="tabs-container">
+          <div className="tabs-nav">
+            <button
+              className={`tab-button ${activeTab === 'overview' ? 'active' : ''}`}
+              onClick={() => setActiveTab('overview')}
+            >
+              Overview
+            </button>
+            <button
+              className={`tab-button ${activeTab === 'competencies' ? 'active' : ''}`}
+              onClick={() => setActiveTab('competencies')}
+            >
+              Competencies
+            </button>
+            <button
+              className={`tab-button ${activeTab === 'appendices' ? 'active' : ''}`}
+              onClick={() => setActiveTab('appendices')}
+            >
+              Appendices
+            </button>
           </div>
-
-          <div className="detail-section">
-            <h3>Learning Objectives</h3>
-            <ul className="objectives-list">
-              {module.learningObjectives.map((objective, index) => (
-                <li key={index}>{objective}</li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="detail-section">
-            <h3>Assessment Methods</h3>
-            <div className="assessment-list">
-              {module.assessmentMethods.map((method, index) => (
-                <div key={index} className="assessment-item">
-                  {method}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="detail-section">
-            <h3>Prerequisites</h3>
-            <div className="prerequisites-list">
-              {module.prerequisites.map((prerequisite, index) => (
-                <span key={index} className="prerequisite-tag">
-                  {prerequisite}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <div className="detail-section">
-            <h3>Competencies</h3>
-            <div className="competencies-list">
-              {module.competencies.map((competency, index) => (
-                <span key={index} className="competency-tag">
-                  {competency}
-                </span>
-              ))}
-            </div>
+          
+          <div className="tab-panel">
+            {renderTabContent()}
           </div>
         </div>
       </div>
@@ -141,4 +210,4 @@ const ModuleDetailScreen: React.FC<ModuleDetailScreenProps> = ({ user }) => {
   );
 };
 
-export default ModuleDetailScreen; 
+export default ModuleDetailScreen;

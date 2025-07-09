@@ -1,28 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User } from '../types';
+import { mockCurricula, mockModules } from '../data/mockData';
 
 interface HomeScreenProps {
   user: User | null;
 }
-
-// Mock data for demonstration
-const mockCurricula = [
-  { id: '1', name: 'Bachelor of Computer Science', year: 2024 },
-  { id: '2', name: 'Master of Business Administration', year: 2024 },
-  { id: '3', name: 'Associate Degree in Graphic Design', year: 2024 },
-  { id: '4', name: 'Bachelor of Information Technology', year: 2024 },
-  { id: '5', name: 'Master of Data Science', year: 2024 },
-];
-
-const mockModules = [
-  { id: '1', name: 'Human Anatomy', credits: 6, curriculumId: '1' },
-  { id: '2', name: 'Software Engineering', credits: 7, curriculumId: '1' },
-  { id: '3', name: 'Machine Learning', credits: 8, curriculumId: '5' },
-  { id: '4', name: 'Art History', credits: 4, curriculumId: '3' },
-  { id: '5', name: 'Financial Accounting', credits: 5, curriculumId: '2' },
-  { id: '6', name: 'Introduction to Psychology', credits: 6, curriculumId: '1' },
-];
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ user }) => {
   const navigate = useNavigate();

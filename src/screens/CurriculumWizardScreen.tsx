@@ -6,7 +6,6 @@ const CurriculumWizardScreen: React.FC = () => {
   const navigate = useNavigate();
   
   const isEditing = id && id !== 'new';
-  const isNewCurriculum = id === 'new';
 
   const handleBack = () => {
     navigate('/home');
