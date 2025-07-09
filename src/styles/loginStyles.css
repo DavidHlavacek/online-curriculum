@@ -100,7 +100,8 @@
   cursor: pointer;
   text-decoration: underline;
   padding: 0;
-  margin-bottom: 20px;
+  /* margin: 8px 0 20px 0; */
+  display: inline-block;
 }
 
 .login-link:hover {

@@ -85,12 +85,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
             </button>
           </form>
           
-          <button 
-            className="login-link"
-            onClick={handleForgotPassword}
-          >
-            Forgot Password
-          </button>
+          <div style={{ textAlign: 'right' }}>
+            <button 
+              className="login-link"
+              onClick={handleForgotPassword}
+            >
+              Forgot Password
+            </button>
+          </div>
           
           <div className="login-divider"></div>
           
